@@ -563,6 +563,8 @@ footer{border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:va
       <div class="rule-card"><div class="rule-icon">&#9203;</div><div class="rule-title">5-Minute Battles</div><div class="rule-body">Each battle uses TikTok LIVE's native 5-minute battle timer. Both creators must be live simultaneously. Only gifts during the timer count.</div></div>
       <div class="rule-card"><div class="rule-icon">&#9830;</div><div class="rule-title">Highest Diamonds Wins</div><div class="rule-body">The creator with the highest total diamond value from gifts wins. Kinetic enters the final score from TikTok's official scoreboard.</div></div>
       <div class="rule-card"><div class="rule-icon">&#9651;</div><div class="rule-title">Single Elimination</div><div class="rule-body">Lose and you're out. Win and you advance. Day 1 Qualifiers, Day 2 Semifinals, Day 3 Championship.</div></div>
+      <div class="rule-card" style="border-color:rgba(0,200,255,0.3)"><div class="rule-icon">&#128241;</div><div class="rule-title">Follow Both Accounts</div><div class="rule-body">You MUST follow <strong style="color:var(--cy)">@the_mr.rogers</strong> and <strong style="color:var(--cy)">@_wheeler_hill</strong> on TikTok before Sunday. This is how you receive your battle matchup details via DM. If you don't follow us, you won't get your info.</div></div>
+      <div class="rule-card" style="border-color:rgba(255,107,0,0.3)"><div class="rule-icon">&#9888;</div><div class="rule-title">Turn Off 18+ Filter</div><div class="rule-body">Before your battle, go to TikTok Settings &rarr; Content Preferences and turn OFF the 18+ content filter. If this is on, TikTok will block you from starting a battle with your matched creator. Do this before Sunday morning.</div></div>
       <div class="rule-card"><div class="rule-icon">&#128151;</div><div class="rule-title">75% Pledge Required</div><div class="rule-body">All creators pledge to donate a minimum 75% of their diamond earnings to the Hagood family via Venmo @Trevorshairbnb. No pledge = no entry.</div></div>
       <div class="rule-card"><div class="rule-icon">&#127942;</div><div class="rule-title">Champion Recognition</div><div class="rule-body">The tournament champion is featured across all Kinetic Live Agency platforms and permanently honored in the Battle with Purpose Hall of Fame.</div></div>
     </div>
@@ -584,6 +586,14 @@ footer{border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:va
         <div id="signup-form-wrap">
           <div class="form-grid">
             <div class="form-section-title">Your TikTok Info</div>
+            <div class="form-group full" style="background:rgba(0,200,255,0.07);border:1px solid rgba(0,200,255,0.2);border-radius:var(--r);padding:14px 16px;margin-bottom:4px">
+              <div style="font-size:12px;font-weight:800;color:var(--cy);margin-bottom:6px">&#128241; Before You Register &mdash; Do These First:</div>
+              <div style="font-size:12px;color:rgba(0,200,255,0.75);line-height:1.8">
+                1. Follow <strong style="color:var(--tx)">@the_mr.rogers</strong> on TikTok &mdash; this is how you get your battle details via DM<br>
+                2. Follow <strong style="color:var(--tx)">@_wheeler_hill</strong> on TikTok &mdash; Wheeler is running this event and may DM you too<br>
+                3. Go to TikTok <strong style="color:var(--tx)">Settings &rarr; Content Preferences &rarr; turn OFF the 18+ filter</strong> &mdash; if this is on you cannot start a battle
+              </div>
+            </div>
             <div class="form-group"><label class="form-label">TikTok Handle <span>*</span></label><input type="text" class="form-input" id="f-handle" placeholder="@yourcreatorhandle"></div>
             <div class="form-group"><label class="form-label">Display Name <span>*</span></label><input type="text" class="form-input" id="f-name" placeholder="Your creator name"></div>
             <div class="form-group"><label class="form-label">Email Address <span>*</span></label><input type="email" class="form-input" id="f-email" placeholder="you@email.com"><div class="form-help">Match details and pledge link sent here</div></div>
@@ -639,6 +649,7 @@ footer{border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:va
               <div class="form-pledge-title">&#9829; The Pledge</div>
               <div class="form-pledge-body">By registering you commit to donating a minimum of <strong>75% of your battle diamond earnings</strong> to the Hagood family via Venmo @Trevorshairbnb. A pledge link will be emailed after your battle. This event exists for Bentley and Brynleigh.</div>
             </div>
+            <div class="form-checkbox-row"><input type="checkbox" class="form-checkbox" id="f-follow"><label class="form-checkbox-label" for="f-follow">I have followed <strong>@the_mr.rogers</strong> and <strong>@_wheeler_hill</strong> on TikTok and I have turned off my 18+ content filter in TikTok settings.</label></div>
             <div class="form-checkbox-row"><input type="checkbox" class="form-checkbox" id="f-pledge"><label class="form-checkbox-label" for="f-pledge">I agree to donate a minimum of <strong>75% of my battle diamond earnings</strong> to the Hagood family. I am honored to be part of this.</label></div>
             <div class="form-checkbox-row"><input type="checkbox" class="form-checkbox" id="f-rules"><label class="form-checkbox-label" for="f-rules">I have read the <strong>tournament rules</strong>, understand the 1v1 single elimination format, and commit to showing up for my assigned 30-minute battle slot.</label></div>
           </div>
@@ -648,7 +659,7 @@ footer{border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:va
         <div class="form-success" id="signup-success">
           <div class="success-ring">&#10003;</div>
           <div class="success-title">You're <span class="g-text">In!</span></div>
-          <div class="success-body">Thank you for stepping up for the Hagood family. Your registration is saved. Matching begins Saturday April 18 at midnight &mdash; you will receive your battle matchup and 30-minute time slot via TikTok DM and email before Sunday.<br><br><strong style="color:var(--am)">If you win on Sunday:</strong> You will get an email to submit your Monday availability for the Semifinals.<br><br><strong style="color:var(--pk)">&#9829; Ashley, Bryant, and Bryleigh &mdash; this one's for you.</strong></div>
+          <div class="success-body">Thank you for stepping up for the Hagood family. Your registration is saved. Matching begins Saturday April 18 at midnight &mdash; you will receive your battle matchup and 30-minute time slot via TikTok DM and email before Sunday.<br><br><strong style="color:var(--cy)">Action required:</strong> Make sure you follow <strong style="color:var(--tx)">@the_mr.rogers</strong> and <strong style="color:var(--tx)">@_wheeler_hill</strong> on TikTok right now so you receive your matchup details via DM. Also turn off your 18+ content filter in TikTok settings or you won't be able to start your battle.<br><br><strong style="color:var(--am)">If you win on Sunday:</strong> You will get an email to submit your Monday availability for the Semifinals.<br><br><strong style="color:var(--pk)">&#9829; Ashley, Bryant, and Bryleigh &mdash; this one's for you.</strong></div>
         </div>
       </div>
     </div>
@@ -968,6 +979,7 @@ async function submitSignup() {
   var diamonds = g('f-diamonds'), d1s = g('f-d1-start'), d1e = g('f-d1-end');
   var pledge = document.getElementById('f-pledge') && document.getElementById('f-pledge').checked;
   var rules = document.getElementById('f-rules') && document.getElementById('f-rules').checked;
+  var follow = document.getElementById('f-follow') && document.getElementById('f-follow').checked;
   document.getElementById('form-err').style.display = 'none';
   if (!handle) return showErr('Enter your TikTok handle.');
   if (!name) return showErr('Enter your display name.');
@@ -975,6 +987,7 @@ async function submitSignup() {
   if (!diamonds) return showErr('Select your diamond range.');
   if (!d1s || !d1e) return showErr('Select your Sunday availability window.');
   if (d1e <= d1s) return showErr('End time must be after start time.');
+  if (!follow) return showErr('Please confirm you have followed @the_mr.rogers and @_wheeler_hill and turned off your 18+ filter.');
   if (!pledge) return showErr('You must agree to the 75% donation pledge.');
   if (!rules) return showErr('Please confirm you have read the rules.');
   var btn = document.getElementById('submit-btn');
