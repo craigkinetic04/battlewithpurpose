@@ -169,7 +169,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(7,8,13,0.97)
 .sched-tab{background:none;border:none;color:var(--mu);padding:10px 14px;font-size:12px;font-weight:600;border-radius:var(--r);transition:all .15s;white-space:normal;flex:1;text-align:center}
 .sched-tab.active{background:var(--card);color:var(--tx)}
 .sched-day-panel{display:none}
-.sched-day-panel.active{display:block}
+.sched-day-panel.active{display:block !important}
 .battle-board{display:flex;flex-direction:column;gap:6px}
 .battle-row{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:14px 20px;display:grid;grid-template-columns:120px 1fr auto;gap:16px;align-items:center;transition:background .15s;width:100%;box-sizing:border-box}
 .battle-row:hover{background:var(--s2)}
@@ -346,11 +346,12 @@ footer{border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:va
   .admin-body{padding:16px}
   .f-stat-grid{grid-template-columns:1fr 1fr}
   .battle-row{grid-template-columns:1fr;gap:6px;padding:12px 14px}
-  .battle-board{gap:8px}
-  .sched-day-panel{display:none;width:100%;overflow:visible}
-  .sched-day-panel.active{display:block;width:100%}
+  .battle-board{gap:8px;width:100%}
+  .sched-day-panel.active{display:block !important;width:100%;overflow:visible}
   .battle-time{font-size:13px;font-weight:800;color:var(--cy)}
   .battle-creator{font-size:13px}
+  .battle-matchup{gap:8px}
+  .battle-tag{font-size:9px}
   div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important}
   .tribute-photos{grid-template-columns:1fr !important}
   .tribute-photo.tall img{height:360px;object-position:center center}
@@ -587,7 +588,7 @@ footer{border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:va
 </section>
 <hr class="div">
 
-<section id="schedule" class="section">
+<section id="schedule" class="section" style="overflow:visible">
   <div class="wrap">
     <div class="sec-header">
       <div class="sec-kicker">Full Battle Schedule</div>
@@ -890,6 +891,9 @@ function init() {
   renderBoards();
   renderBracket();
   renderLB(signups);
+  // Force initial active panel to show inline - fixes Squarespace/mobile CSS conflicts
+  var firstPanel = document.getElementById('sched-0');
+  if (firstPanel) firstPanel.style.display = 'block';;
   // Auto-load live data from Airtable on every page visit
   autoLoadPublicData();
 }
@@ -998,6 +1002,10 @@ async function autoLoadPublicData() {
     setTimeout(function() {
       renderBoards();
       renderBracket();
+      // Force active panel visible after Airtable data loads
+      document.querySelectorAll('.sched-day-panel').forEach(function(p) {
+        p.style.display = p.classList.contains('active') ? 'block' : 'none';
+      });
     }, 300);
 
   } catch(e) {
@@ -1043,9 +1051,14 @@ function checkDeadline() {
 
 function schedTab(i, btn) {
   document.querySelectorAll('.sched-tab').forEach(function(t){t.classList.remove('active');});
-  document.querySelectorAll('.sched-day-panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.sched-day-panel').forEach(function(p){
+    p.classList.remove('active');
+    p.style.display = 'none';
+  });
   btn.classList.add('active');
-  document.getElementById('sched-' + i).classList.add('active');
+  var panel = document.getElementById('sched-' + i);
+  panel.classList.add('active');
+  panel.style.display = 'block';
 }
 
 function genSlots() {
