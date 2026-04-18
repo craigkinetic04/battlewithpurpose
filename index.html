@@ -165,13 +165,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(7,8,13,0.97)
 .format-rule{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--bdr)}
 .format-rule:last-child{border-bottom:none}
 .rule-ico{width:30px;height:30px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:1px}
-.sched-tabs{display:flex;gap:2px;background:var(--s3);padding:4px;border-radius:var(--rl);margin-bottom:20px;width:fit-content;flex-wrap:wrap}
-.sched-tab{background:none;border:none;color:var(--mu);padding:10px 18px;font-size:12px;font-weight:600;border-radius:var(--r);transition:all .15s;white-space:nowrap}
+.sched-tabs{display:flex;gap:2px;background:var(--s3);padding:4px;border-radius:var(--rl);margin-bottom:20px;width:100%;flex-wrap:wrap}
+.sched-tab{background:none;border:none;color:var(--mu);padding:10px 14px;font-size:12px;font-weight:600;border-radius:var(--r);transition:all .15s;white-space:normal;flex:1;text-align:center}
 .sched-tab.active{background:var(--card);color:var(--tx)}
 .sched-day-panel{display:none}
 .sched-day-panel.active{display:block}
 .battle-board{display:flex;flex-direction:column;gap:6px}
-.battle-row{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:14px 20px;display:grid;grid-template-columns:120px 1fr auto;gap:16px;align-items:center;transition:background .15s}
+.battle-row{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:14px 20px;display:grid;grid-template-columns:120px 1fr auto;gap:16px;align-items:center;transition:background .15s;width:100%;box-sizing:border-box}
 .battle-row:hover{background:var(--s2)}
 .battle-time{font-size:12px;font-weight:700;color:var(--cy)}
 .battle-date-sub{font-size:10px;color:var(--mu);margin-top:2px}
@@ -345,7 +345,12 @@ footer{border-top:1px solid var(--bdr);padding:40px 0;text-align:center;color:va
   .signup-inner{padding:24px 16px}
   .admin-body{padding:16px}
   .f-stat-grid{grid-template-columns:1fr 1fr}
-  .battle-row{grid-template-columns:1fr;gap:6px}
+  .battle-row{grid-template-columns:1fr;gap:6px;padding:12px 14px}
+  .battle-board{gap:8px}
+  .sched-day-panel{display:none;width:100%;overflow:visible}
+  .sched-day-panel.active{display:block;width:100%}
+  .battle-time{font-size:13px;font-weight:800;color:var(--cy)}
+  .battle-creator{font-size:13px}
   div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important}
   .tribute-photos{grid-template-columns:1fr !important}
   .tribute-photo.tall img{height:360px;object-position:center center}
@@ -902,18 +907,74 @@ async function autoLoadPublicData() {
     signups = data.records;
     localStorage.setItem('bwp_sig', JSON.stringify(signups));
 
-    // Also fetch scores from BattleScores table
+    // REBUILD MATCHES FROM SIGNUPS TABLE
+    // Auto-match writes MatchedWith + BattleTime back to Airtable
+    // So we can reconstruct the full schedule from Signups data alone
+    var rebuiltMatches = [];
+    var seen = {};
+    signups.forEach(function(rec) {
+      var f = rec.fields;
+      if (!f.MatchedWith || !f.BattleTime) return;
+      var key = [f.Handle, f.MatchedWith].sort().join('|');
+      if (seen[key]) return;
+      seen[key] = true;
+      // Find the other creator
+      var other = signups.find(function(s) {
+        return s.fields.Handle === f.MatchedWith;
+      });
+      // Determine round from BattleTime or default to Qualifier
+      var round = f.Round || 'Qualifier';
+      var dayIndex = 0;
+      if (round === 'Semifinal') dayIndex = 1;
+      if (round === 'Final') dayIndex = 2;
+      rebuiltMatches.push({
+        id: 'at_' + key,
+        creator1: f.Handle,
+        creator2: f.MatchedWith,
+        battleTime: f.BattleTime,
+        slotKey: '',
+        dayIndex: dayIndex,
+        round: round,
+        status: f.Status === 'Advanced' || f.Status === 'Eliminated' ? 'Complete' : 'Scheduled',
+        winner: '',
+        c1diamonds: 0,
+        c2diamonds: 0
+      });
+    });
+
+    // Merge rebuilt matches with any local matches (preserve scores)
+    var localMatches = JSON.parse(localStorage.getItem('bwp_mat') || '[]');
+    if (rebuiltMatches.length > 0) {
+      // Use rebuilt matches as base, overlay any scores from local
+      rebuiltMatches.forEach(function(rm) {
+        var local = localMatches.find(function(lm) {
+          return (lm.creator1 === rm.creator1 && lm.creator2 === rm.creator2) ||
+                 (lm.creator1 === rm.creator2 && lm.creator2 === rm.creator1);
+        });
+        if (local) {
+          rm.c1diamonds = local.c1diamonds || 0;
+          rm.c2diamonds = local.c2diamonds || 0;
+          rm.winner = local.winner || '';
+          rm.status = local.status || rm.status;
+          rm.id = local.id || rm.id;
+        }
+      });
+      matches = rebuiltMatches;
+      localStorage.setItem('bwp_mat', JSON.stringify(matches));
+    }
+
+    // Also fetch scores from BattleScores table to get diamonds
     var url2 = 'https://api.airtable.com/v0/' + atBase + '/' + encodeURIComponent(atST) + '?pageSize=100';
     var r2 = await fetch(url2, { headers: { 'Authorization': 'Bearer ' + atKey } });
     if (r2.ok) {
       var data2 = await r2.json();
       if (data2.records && data2.records.length) {
-        // Rebuild matches from score records and local matches
-        var localMatches = JSON.parse(localStorage.getItem('bwp_mat') || '[]');
-        // Update scores in local matches from Airtable scores
         data2.records.forEach(function(rec) {
           var f = rec.fields;
-          var m = localMatches.find(function(x){ return x.id === f.MatchID; });
+          var m = matches.find(function(x) {
+            return (x.creator1 === f.Creator1 && x.creator2 === f.Creator2) ||
+                   (x.creator1 === f.Creator2 && x.creator2 === f.Creator1);
+          });
           if (m) {
             m.c1diamonds = f.Creator1Diamonds || 0;
             m.c2diamonds = f.Creator2Diamonds || 0;
@@ -921,9 +982,7 @@ async function autoLoadPublicData() {
             m.status = f.Winner ? 'Complete' : m.status;
           }
         });
-        matches = localMatches;
         localStorage.setItem('bwp_mat', JSON.stringify(matches));
-        // Recalculate total diamonds
         totalDiamonds = matches.reduce(function(sum, m) {
           return sum + (m.c1diamonds || 0) + (m.c2diamonds || 0);
         }, 0);
@@ -936,9 +995,13 @@ async function autoLoadPublicData() {
     renderLB(signups);
     renderBoards();
     renderBracket();
+    setTimeout(function() {
+      renderBoards();
+      renderBracket();
+    }, 300);
 
   } catch(e) {
-    // Silent fail - page still works from local storage
+    // Silent fail
   }
 }
 
